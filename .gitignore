@@ -4,7 +4,5 @@ modeles
 sons
 textures
 Makefile
-*.cc
-*.h
 *.o
 labh
