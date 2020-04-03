@@ -297,26 +297,27 @@ Labyrinthe::Labyrinthe (char* filename){
 
 
 	//Matrice des distances, on les initialise sans le +1, car pas nécéssaire
-	int matDistance[this->lab_width][this->lab_height];	
+	this->treasor_distance = new int*[this->lab_width];	
 
 	
 	//La file qui va nous permettre de stocker les cases à traiter au fur et à mesure.
 	queue<int> fileCase;
 	//On initialise la matrice des distances. Le trésor est à 0 et le reste à une distance infinie
 	for (int a = 0; a < this->lab_width; a++) {
+		this->treasor_distance[a] = new int[this->lab_height];
         for (int b = 0; b < this->lab_height; b++) {
 			if(matFile[a][b]=='T'){
-				matDistance[a][b] = 0;
+				this->treasor_distance[a][b] = 0;
 				//On ajoute la case avec le trésor à la file
 				fileCase.push(a);
 				fileCase.push(b);
 			}
 			else{
-				matDistance[a][b] = INFINITY;
+				this->treasor_distance[a][b] = INFINITY;
 			}
         }
     }
-	// matDistance[_treasor._x][_treasor._y] = 0;
+	// this->treasor_distance[_treasor._x][_treasor._y] = 0;
 	queue<int> distance;
 	distance.push(0);
 	while(!fileCase.empty()){
@@ -334,8 +335,8 @@ Labyrinthe::Labyrinthe (char* filename){
 		//On calcule la distance, si c'est C, G ou ' ' ok 
 		//Case en haut
 		if (matFile[x-1][y] == ' ' || matFile[x-1][y] == 'C' || matFile[x-1][y] == 'G' ){
-			if (matDistance[x-1][y]>d){
-				matDistance[x-1][y] = d;
+			if (this->treasor_distance[x-1][y]>d){
+				this->treasor_distance[x-1][y] = d;
 				fileCase.push(x-1);
 				fileCase.push(y);
 				distance.push(d);
@@ -343,8 +344,8 @@ Labyrinthe::Labyrinthe (char* filename){
 		}
 		//Case en bas
 		if (matFile[x+1][y] == ' ' || matFile[x+1][y] == 'C' || matFile[x+1][y] == 'G' ){
-			if (matDistance[x+1][y]>d){
-				matDistance[x+1][y] = d;
+			if (this->treasor_distance[x+1][y]>d){
+				this->treasor_distance[x+1][y] = d;
 				fileCase.push(x+1);
 				fileCase.push(y);
 				distance.push(d);
@@ -352,8 +353,8 @@ Labyrinthe::Labyrinthe (char* filename){
 		}
 		//Case à gauche
 		if (matFile[x][y-1] == ' ' || matFile[x][y-1] == 'C' || matFile[x][y-1] == 'G' ){
-			if (matDistance[x][y-1]>d){
-				matDistance[x][y-1] = d;
+			if (this->treasor_distance[x][y-1]>d){
+				this->treasor_distance[x][y-1] = d;
 				fileCase.push(x);
 				fileCase.push(y-1);
 				distance.push(d);
@@ -362,8 +363,8 @@ Labyrinthe::Labyrinthe (char* filename){
 
 		//Case à droite
 		if (matFile[x][y+1] == ' ' || matFile[x][y+1] == 'C' || matFile[x][y+1] == 'G' ){
-			if (matDistance[x][y+1]>d){
-				matDistance[x][y+1] = d;
+			if (this->treasor_distance[x][y+1]>d){
+				this->treasor_distance[x][y+1] = d;
 				fileCase.push(x);
 				fileCase.push(y+1);
 				distance.push(d);
@@ -374,7 +375,7 @@ Labyrinthe::Labyrinthe (char* filename){
 	//test affichage de la matice de distance
     for (int a = 0; a < this->lab_width; a++) {
         for (int b = 0; b < this->lab_height; b++) {
-            	cout<<matDistance[a][b]<<"|";
+            	cout<<this->treasor_distance[a][b]<<"|";
         }
         cout<<endl;
     }

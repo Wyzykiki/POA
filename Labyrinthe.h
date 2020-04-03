@@ -5,15 +5,18 @@
 
 class Labyrinthe : public Environnement {
 private:
-	char	**_data;	// indique si la case est libre ou occupée.
+	char	**_data;	// indique si la case est libre ou occupï¿½e.
 	int		lab_width;	// dimensions du rectangle.
 	int		lab_height;	// englobant le labyrinthe.
+	
+	/** Matrice des distances au trÃ©sor */
+	int** treasor_distance;
 
 public:
 	Labyrinthe (char*);
 	int width () { return lab_width;}	// retourne la largeur du labyrinthe.
 	int height () { return lab_height;}	// retourne la longueur du labyrinthe.
-	// retourne l'état (occupation) de la case (i, j).
+	// retourne l'ï¿½tat (occupation) de la case (i, j).
 	char data (int i, int j)
 	{
 		return _data [i][j];
