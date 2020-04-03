@@ -7,7 +7,8 @@ textures
 Makefile
 *.o
 labh
-Environement.h
+Environnement.h
 Mover.h
 FireBall.h
 Sound.h
+*.txt
