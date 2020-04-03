@@ -1,3 +1,4 @@
+.vscode
 fmod
 jpeg
 modeles
@@ -6,3 +7,7 @@ textures
 Makefile
 *.o
 labh
+Environement.h
+Mover.h
+FireBall.h
+Sound.h
