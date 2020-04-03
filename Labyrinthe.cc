@@ -5,7 +5,9 @@
 #include <string>
 #include <fstream>
 #include <map>
+#include <queue>
 #include <iostream>
+#define INFINITY 9999
 
 using namespace std;
 
@@ -286,10 +288,96 @@ Labyrinthe::Labyrinthe (char* filename){
 		this->_walls[k]._ntex = tooMuchWalls[k]._ntex;
 	}
 
-	delete[] tooMuchWalls;
+	delete[] tooMuchWalls;	
 
-
+	//Placement du chasseur
 	this->_guards[0] = new Chasseur(this);
 	this->_guards[0]->_x = hunter_x*scale;
 	this->_guards[0]->_y = hunter_y*scale;
+
+
+	//Matrice des distances, on les initialise sans le +1, car pas nécéssaire
+	int matDistance[this->lab_width][this->lab_height];	
+
+	
+	//La file qui va nous permettre de stocker les cases à traiter au fur et à mesure.
+	queue<int> fileCase;
+	//On initialise la matrice des distances. Le trésor est à 0 et le reste à une distance infinie
+	for (int a = 0; a < this->lab_width; a++) {
+        for (int b = 0; b < this->lab_height; b++) {
+			if(matFile[a][b]=='T'){
+				matDistance[a][b] = 0;
+				//On ajoute la case avec le trésor à la file
+				fileCase.push(a);
+				fileCase.push(b);
+			}
+			else{
+				matDistance[a][b] = INFINITY;
+			}
+        }
+    }
+	// matDistance[_treasor._x][_treasor._y] = 0;
+	queue<int> distance;
+	distance.push(0);
+	while(!fileCase.empty()){
+
+		//On retire le premier point
+		int x = fileCase.front();
+		fileCase.pop();
+		int y = fileCase.front();
+		fileCase.pop();
+
+		//On récupère notre distance
+		int d = distance.front() + 1;
+		distance.pop();
+
+		//On calcule la distance, si c'est C, G ou ' ' ok 
+		//Case en haut
+		if (matFile[x-1][y] == ' ' || matFile[x-1][y] == 'C' || matFile[x-1][y] == 'G' ){
+			if (matDistance[x-1][y]>d){
+				matDistance[x-1][y] = d;
+				fileCase.push(x-1);
+				fileCase.push(y);
+				distance.push(d);
+			}
+		}
+		//Case en bas
+		if (matFile[x+1][y] == ' ' || matFile[x+1][y] == 'C' || matFile[x+1][y] == 'G' ){
+			if (matDistance[x+1][y]>d){
+				matDistance[x+1][y] = d;
+				fileCase.push(x+1);
+				fileCase.push(y);
+				distance.push(d);
+			}
+		}
+		//Case à gauche
+		if (matFile[x][y-1] == ' ' || matFile[x][y-1] == 'C' || matFile[x][y-1] == 'G' ){
+			if (matDistance[x][y-1]>d){
+				matDistance[x][y-1] = d;
+				fileCase.push(x);
+				fileCase.push(y-1);
+				distance.push(d);
+			}
+		}
+
+		//Case à droite
+		if (matFile[x][y+1] == ' ' || matFile[x][y+1] == 'C' || matFile[x][y+1] == 'G' ){
+			if (matDistance[x][y+1]>d){
+				matDistance[x][y+1] = d;
+				fileCase.push(x);
+				fileCase.push(y+1);
+				distance.push(d);
+			}
+		}
+	}
+
+	//test affichage de la matice de distance
+    for (int a = 0; a < this->lab_width; a++) {
+        for (int b = 0; b < this->lab_height; b++) {
+            	cout<<matDistance[a][b]<<"|";
+        }
+        cout<<endl;
+    }
+
+
 }
