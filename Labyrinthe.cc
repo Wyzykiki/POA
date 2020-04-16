@@ -75,8 +75,6 @@ Labyrinthe::Labyrinthe (char* filename){
 							default:
 								if (line[i] >= 'a' && line[i] <= 'z') {
 									this->_npicts++;
-								} else {
-									//TODO: exeption mauvais laby ?
 								}
 								break;
 						}
@@ -311,6 +309,7 @@ Labyrinthe::Labyrinthe (char* filename){
 				//On ajoute la case avec le trésor à la file
 				fileCase.push(a);
 				fileCase.push(b);
+				fileCase.push(0);
 			}
 			else{
 				this->treasor_distance[a][b] = INFINITY;
@@ -318,8 +317,6 @@ Labyrinthe::Labyrinthe (char* filename){
         }
     }
 	// this->treasor_distance[_treasor._x][_treasor._y] = 0;
-	queue<int> distance;
-	distance.push(0);
 	while(!fileCase.empty()){
 
 		//On retire le premier point
@@ -329,8 +326,8 @@ Labyrinthe::Labyrinthe (char* filename){
 		fileCase.pop();
 
 		//On récupère notre distance
-		int d = distance.front() + 1;
-		distance.pop();
+		int d = fileCase.front() + 1;
+		fileCase.pop();
 
 		//On calcule la distance, si c'est C, G ou ' ' ok 
 		//Case en haut
@@ -339,7 +336,7 @@ Labyrinthe::Labyrinthe (char* filename){
 				this->treasor_distance[x-1][y] = d;
 				fileCase.push(x-1);
 				fileCase.push(y);
-				distance.push(d);
+				fileCase.push(d);
 			}
 		}
 		//Case en bas
@@ -348,7 +345,7 @@ Labyrinthe::Labyrinthe (char* filename){
 				this->treasor_distance[x+1][y] = d;
 				fileCase.push(x+1);
 				fileCase.push(y);
-				distance.push(d);
+				fileCase.push(d);
 			}
 		}
 		//Case à gauche
@@ -357,7 +354,7 @@ Labyrinthe::Labyrinthe (char* filename){
 				this->treasor_distance[x][y-1] = d;
 				fileCase.push(x);
 				fileCase.push(y-1);
-				distance.push(d);
+				fileCase.push(d);
 			}
 		}
 
@@ -367,18 +364,9 @@ Labyrinthe::Labyrinthe (char* filename){
 				this->treasor_distance[x][y+1] = d;
 				fileCase.push(x);
 				fileCase.push(y+1);
-				distance.push(d);
+				fileCase.push(d);
 			}
 		}
 	}
-
-	//test affichage de la matice de distance
-    for (int a = 0; a < this->lab_width; a++) {
-        for (int b = 0; b < this->lab_height; b++) {
-            	cout<<this->treasor_distance[a][b]<<"|";
-        }
-        cout<<endl;
-    }
-
 
 }
