@@ -5,15 +5,22 @@
 
 class Labyrinthe;
 
-class Gardien : public Mover {
-public:
-	Gardien (Labyrinthe* l, const char* modele) : Mover (120, 80, l, modele)
-	{}
+enum EtatGardien {patrouille, defense, attaque};
 
-	// mon gardien pense très mal!
-	void update (void) {};
-	// et ne bouge pas!
-	bool move (double dx, double dy) { return false; }
+class Gardien : public Mover {
+private:
+	EtatGardien etat = patrouille;
+	int distVision = 5;
+	float vitesse = 0.5;
+
+	void patrol();
+
+public:
+	Gardien (Labyrinthe* l, const char* modele, bool enDefense);
+
+	void update (void);
+
+	bool move (double dx, double dy);
 	// ne sait pas tirer sur un ennemi.
 	void fire (int angle_vertical) {}
 	// quand a faire bouger la boule de feu...

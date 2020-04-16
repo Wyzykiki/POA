@@ -145,16 +145,16 @@ Labyrinthe::Labyrinthe (char* filename){
 							Mover* guard;
 							switch (indexGuardian%4) {
 								case 1:
-									guard = new Gardien(this, "drfreak");
+									guard = new Gardien(this, /* "Link2" */"drfreak", indexGuardian<4);
 									break;
 								case 2:
-									guard = new Gardien(this, "Marvin");
+									guard = new Gardien(this, "Marvin", indexGuardian<4);
 									break;
 								case 3:
-									guard = new Gardien(this, "Potator");
+									guard = new Gardien(this, "Potator", indexGuardian<4);
 									break;
 								default:
-									guard = new Gardien(this, "garde");
+									guard = new Gardien(this, "garde", false);
 									break;
 							}
 
