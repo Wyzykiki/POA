@@ -4,7 +4,6 @@ jpeg
 modeles
 sons
 textures
-Makefile
 *.o
 labh
 Environnement.h
