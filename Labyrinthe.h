@@ -12,6 +12,9 @@ private:
 	/** Matrice des distances au trésor */
 	int** treasor_distance;
 
+	/** Dernière position connue du chasseur */
+	int lastPos[3] = {-1, -1, -1};
+
 public:
 	Labyrinthe (char*);
 	int width () { return lab_width;}	// retourne la largeur du labyrinthe.
@@ -20,6 +23,21 @@ public:
 	char data (int i, int j)
 	{
 		return _data [i][j];
+	}
+
+	/** Modifie la case [i,j] avec la valeur de c */
+	void setData(int i, int j, char c) {
+		this->_data[i][j] = c;
+	}
+
+	int* getLastPos() {
+		return this->lastPos;
+	}
+
+	void updateLastPos(int x, int y, int alpha) {
+		this->lastPos[0] = x;
+		this->lastPos[1] = y;
+		this->lastPos[2] = alpha;
 	}
 };
 
