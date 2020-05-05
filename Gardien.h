@@ -12,14 +12,21 @@ private:
 	EtatGardien etat = patrouille;
 	int distVision = 5;
 	float vitesse = 0.5;
+	float potentielDefense = 1; //Initialisé le plus loin du trésor
+	bool mort = false;
 
 	void patrol();
+	void modeDefense();
 
 public:
 	Gardien (Labyrinthe* l, const char* modele, bool enDefense);
 
 	void update (void);
+	
+	int caseProche(int x, int y);
 
+	void majPotentielDefense(void);
+	
 	bool move (double dx, double dy);
 	// ne sait pas tirer sur un ennemi.
 	void fire (int angle_vertical) {}

@@ -293,7 +293,14 @@ Labyrinthe::Labyrinthe (char* filename){
 	this->_guards[0]->_x = hunter_x*scale;
 	this->_guards[0]->_y = hunter_y*scale;
 
-
+	// Affichage MafFile
+	for (int a = 0; a < this->lab_width; a++) {
+        for (int b = 0; b < this->lab_height; b++) {
+			cout<<matFile[a][b];
+		}
+		cout<<endl;
+	}
+	
 	//Matrice des distances, on les initialise sans le +1, car pas nécéssaire
 	this->treasor_distance = new int*[this->lab_width];	
 
@@ -367,6 +374,61 @@ Labyrinthe::Labyrinthe (char* filename){
 				fileCase.push(d);
 			}
 		}
+
+
+		//Case en haut à droite
+		if (matFile[x-1][y+1] == ' ' || matFile[x-1][y+1] == 'C' || matFile[x-1][y+1] == 'G' ){
+			if (this->treasor_distance[x-1][y+1]>d){
+				this->treasor_distance[x-1][y+1] = d;
+				fileCase.push(x-1);
+				fileCase.push(y+1);
+				fileCase.push(d);
+			}
+		}
+		//Case en haut à gauche
+		if (matFile[x-1][y-1] == ' ' || matFile[x-1][y-1] == 'C' || matFile[x-1][y-1] == 'G' ){
+			if (this->treasor_distance[x-1][y-1]>d){
+				this->treasor_distance[x-1][y-1] = d;
+				fileCase.push(x-1);
+				fileCase.push(y-1);
+				fileCase.push(d);
+			}
+		}
+		//Case en bas à droite
+		if (matFile[x+1][y+1] == ' ' || matFile[x+1][y+1] == 'C' || matFile[x+1][y+1] == 'G' ){
+			if (this->treasor_distance[x+1][y+1]>d){
+				this->treasor_distance[x+1][y+1] = d;
+				fileCase.push(x+1);
+				fileCase.push(y+1);
+				fileCase.push(d);
+			}
+		}
+
+		//Case en bas à gauche
+		if (matFile[x+1][y-1] == ' ' || matFile[x+1][y-1] == 'C' || matFile[x+1][y-1] == 'G' ){
+			if (this->treasor_distance[x+1][y-1]>d){
+				this->treasor_distance[x+1][y-1] = d;
+				fileCase.push(x+1);
+				fileCase.push(y-1);
+				fileCase.push(d);
+			}
+		}
+	}
+	// Affichage treasor
+	for (int a = 0; a < this->lab_width; a++) {
+        for (int b = 0; b < this->lab_height; b++) {
+			cout<<treasor_distance[a][b];
+		}
+		cout<<endl;
 	}
 
+	this->distanceMax = 0.0;
+	//On calcule la distance max qu'il y a dans le labyrinthe
+	for (int x = 0; x < this->lab_width; x++) {
+        for (int y = 0; y < this->lab_height; y++) {
+			if(this->treasor_distance[x][y] > this->distanceMax && this->treasor_distance[x][y] != INFINITY){
+				this->distanceMax = this->treasor_distance[x][y];
+			}
+		}
+	}
 }
