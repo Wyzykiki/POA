@@ -19,6 +19,9 @@ public:
 	Labyrinthe (char*);
 	int width () { return lab_width;}	// retourne la largeur du labyrinthe.
 	int height () { return lab_height;}	// retourne la longueur du labyrinthe.
+	/* Distance la plus grande entre une case et un trésor*/
+	float distanceMax;
+
 	// retourne l'�tat (occupation) de la case (i, j).
 	char data (int i, int j)
 	{
@@ -38,6 +41,11 @@ public:
 		this->lastPos[0] = x;
 		this->lastPos[1] = y;
 		this->lastPos[2] = alpha;
+	}
+	// retourne la distance à la case
+	int getDistanceTresor (int i, int j)
+	{
+		return treasor_distance [i][j];
 	}
 };
 

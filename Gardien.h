@@ -13,9 +13,12 @@ private:
 	int distVision = 5;
 	float vitesse = 0.5;
 	bool fireBallActive = false;
+	float potentielDefense = 1; //Initialisé le plus loin du trésor
+	bool mort = false;
 
 	/** Mode Patrouille */
 	void patrol();
+	void modeDefense();
 
 	/** Scanne ses environs */
 	void scout();
@@ -26,7 +29,11 @@ public:
 	Gardien (Labyrinthe* l, const char* modele, bool enDefense);
 
 	void update (void);
+	
+	int caseProche(int x, int y);
 
+	void majPotentielDefense(void);
+	
 	bool move (double dx, double dy);
 
 	void fire (int angle_vertical);
