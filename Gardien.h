@@ -15,6 +15,7 @@ private:
 	bool fireBallActive = false;
 	float potentielDefense = 1; //Initialisé le plus loin du trésor
 	bool mort = false;
+	bool changeCase = false ;
 
 	/** Mode Patrouille */
 	void patrol();

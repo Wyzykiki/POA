@@ -92,7 +92,6 @@ void Gardien::scout() {
 			
 			this->etat = EtatGardien::attaque;
 		}
-
 	}
 }
 
@@ -159,47 +158,38 @@ void Gardien::attack() {
 void Gardien::modeDefense(){
 	//On selectionne l'angle de la case vers laquelle on doit se diriger!
 	int angle = caseProche((int) round(this->_x/Environnement::scale), (int) round(this->_y/Environnement::scale));
-	std::cout<<this->_angle<<std::endl;
-	this->_angle = angle;
-	double dx = - this->vitesse * sin(this->_angle*PI/180);
-	double dy = this->vitesse * cos(this->_angle*PI/180);
-	move(dx, dy);
+	//On calcule un angle aléatoire en prenant un cone de 90°
+	int angleRandom = (rand() % 90) - 45;
 
-	// Il avance tout droit -> ne change pas d'angle
-	// if(angle==0){
-	// 	double dx = - this->vitesse * sin(this->_angle*PI/180);
-	// 	double dy = this->vitesse * cos(this->_angle*PI/180);
-	// 	move(dx, dy);
-	// }
-	// //On va devoir changer son angle de direction
-	// else{
-	// 	//On change l'angle de 45°
-	// 	if(angle<=180 && angle > 0){
-	// 		// this->_angle = (this->_angle + 45) % 360;
-	// 		this->_angle =  45 ;
-	// 		double dx = - this->vitesse * sin(this->_angle*PI/180);
-	// 		double dy = this->vitesse * cos(this->_angle*PI/180);
-	// 		std::cout<<move(dx, dy)<<std::endl;
-	// 	}
-	// 	// 180<angle
-	// 	//On change l'angle de 315°
-	// 	else{
-	// 		// this->_angle = (this->_angle + 315) % 360;
-	// 		this->_angle =  315 ;
-	// 		double dx = - this->vitesse * sin(this->_angle*PI/180);
-	// 		double dy = this->vitesse * cos(this->_angle*PI/180);
-	// 		std::cout<<move(dx, dy)<<std::endl;
-
-	// 	}
-	// }
-	
+	// S'il a changé de case, on retire un angle  
+	if(changeCase){
+		changeCase = false;
+		//Entre O et 180, il se dirige vers la gauche
+		if(angle<=180 && angle > 0){
+			this->_angle =  angle + angleRandom;
+			double dx = - this->vitesse * sin(this->_angle*PI/180);
+			double dy = this->vitesse * cos(this->_angle*PI/180);
+		}
+		//Entre 180 et 360, il se dirige vers la droite 
+		else{
+			this->_angle =  angle + angleRandom;
+			double dx = - this->vitesse * sin(this->_angle*PI/180);
+			double dy = this->vitesse * cos(this->_angle*PI/180);
+		}
+	}
+	// S'il n'a pas changé de case, on reste avec le même angle
+	else{
+		double dx = - this->vitesse * sin(this->_angle*PI/180);
+		double dy = this->vitesse * cos(this->_angle*PI/180);
+		//Dans le cas ou il est bloqué devant un obstacle, on le fait changer d'angle.
+		if(!move(dx, dy)){changeCase = true;};
+	}
 }
 
 //Fonction qui retourne l'id de la case la plus proche
 //cx, cy étant les coordonnées de cette case
 //angle, l'angle vers lequel on se déplace
 int Gardien::caseProche(int x, int y){
-	std::cout<<" x: "<<x<<" y: "<<y<<std::endl;
 	Labyrinthe* lab = ((Labyrinthe*) _l);
 	int cx = x;
 	int cy = y;
@@ -277,7 +267,6 @@ int Gardien::caseProche(int x, int y){
 		cy = y+1;
 		angle = 225;
 	}
-	std::cout<<"Case proche "<<cx<<" "<<cy<<"angle "<<angle<<std::endl;
 	return angle;
 }
 
@@ -314,6 +303,8 @@ bool Gardien::move(double dx, double dy) {
 	if ((postMoveI!=preMoveI || postMoveJ !=preMoveJ) && this->_l->data(postMoveI, postMoveJ) == 1) {
 		return false;
 	} else {
+	// Si on change de case, on passe notre booléan à vrai.
+		if (preMoveI != postMoveI || preMoveJ != postMoveJ){changeCase = true;}
 		Labyrinthe* lab = ((Labyrinthe*) _l);
 		lab->setData((int) round(this->_x/Environnement::scale), (int) round(this->_y/Environnement::scale), 0);
 		this->_x += dx;
@@ -406,3 +397,4 @@ void Gardien::majPotentielDefense(){
 			}
 		}
 	}
+}
