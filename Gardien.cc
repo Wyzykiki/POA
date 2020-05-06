@@ -149,16 +149,15 @@ void Gardien::modeDefense(){
 	// S'il a changé de case, on retire un angle  
 	if(changeCase){
 		changeCase = false;
-		//Entre O et 180, il se dirige vers la gauche
-		if(angle<=180 && angle > 0){
-			this->_angle =  angle + angleRandom;
+		//Entre O et 45
+		if(angle<=45 && angleRandom < 0){
+			this->_angle =  (360 + angle + angleRandom) % 360;
 			double dx = - this->vitesse * sin(this->_angle*PI/180);
 			double dy = this->vitesse * cos(this->_angle*PI/180);
 			move(dx,dy);
 		}
-		//Entre 180 et 360, il se dirige vers la droite 
 		else{
-			this->_angle =  angle + angleRandom;
+			this->_angle =  (angle + angleRandom) % 360;
 			double dx = - this->vitesse * sin(this->_angle*PI/180);
 			double dy = this->vitesse * cos(this->_angle*PI/180);
 			move(dx,dy);
@@ -191,7 +190,7 @@ int Gardien::caseProche(int x, int y){
 	//Case en bas
 	int bas = lab->getDistanceTresor(x+1,y);
 	if (bas < minVal){
-		minVal = haut;
+		minVal = bas;
 		angle = 270;
 	}
 
@@ -258,7 +257,7 @@ void Gardien::update() {
 }
 
 /** Déplace le gardien si le déplacement est valide */
-bool Gardien::move(double dx, double dy) {
+bool Gardien::move_aux(double dx, double dy) {
 	/** La case physique où il se trouve avant son déplacement */
 	int preMoveI = (int) round((this->_x)/Environnement::scale);
 	int preMoveJ = (int) round((this->_y)/Environnement::scale);
@@ -282,6 +281,13 @@ bool Gardien::move(double dx, double dy) {
 		lab->setData((int) round(this->_x/Environnement::scale), (int) round(this->_y/Environnement::scale), 1);
 		return true;
 	}
+}
+
+bool Gardien::move (double dx, double dy) {
+	if (this->etat == defense) {
+		return move_aux (dx, dy) || move_aux (dx, 0.0) || move_aux (0.0, dy);
+	}
+	return move_aux (dx, dy);
 }
 
 void Gardien::fire (int angle_vertical) {
@@ -371,16 +377,17 @@ void Gardien::majPotentielDefense() {
 
 	//Si la somme des potentiels défenses est plus grande que le seuil -> défend trop 
 	//Alors on retire le dernier gardien et le passe en mode patrouille
-	if(sumPD > seuil){
-		((Gardien*) lab->_guards[dernierGardienDefense])->etat = EtatGardien::patrouille;
+	if (sumPD > seuil && this == lab->_guards[dernierGardienDefense]) {
+		((Gardien*) this)->etat = EtatGardien::patrouille;
 	}
 	//On est dans le cas ou pas trop de défenseurs
 	else{
 		//On vérifie qu'il y a encore un  gardien dans la liste après
 		if(this->_l->_nguards != dernierGardienDefense+1){
 			//Si on ajoute le potentiel défense du prochain gardien et que ça ne dépasse pas le seuil, il vient en défense
-			if((sumPD +((Gardien*) lab->_guards[dernierGardienDefense+1])->potentielDefense) <= seuil){
-				((Gardien*) lab->_guards[dernierGardienDefense+1])->etat = EtatGardien::defense;
+			Gardien* guard = (Gardien*) this;
+			if(!guard->mort && guard->etat != attaque && this == lab->_guards[dernierGardienDefense+1]  && (sumPD + guard->potentielDefense) <= seuil){
+				guard->etat = EtatGardien::defense;
 			}
 		}
 	}

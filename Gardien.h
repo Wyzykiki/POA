@@ -27,6 +27,8 @@ private:
 	/** Mode attaque */
 	void attack();
 
+	bool move_aux(double dx, double dy);
+
 public:
 	Gardien (Labyrinthe* l, const char* modele, bool enDefense);
 
