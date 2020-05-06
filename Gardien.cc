@@ -169,12 +169,14 @@ void Gardien::modeDefense(){
 			this->_angle =  angle + angleRandom;
 			double dx = - this->vitesse * sin(this->_angle*PI/180);
 			double dy = this->vitesse * cos(this->_angle*PI/180);
+			move(dx,dy);
 		}
 		//Entre 180 et 360, il se dirige vers la droite 
 		else{
 			this->_angle =  angle + angleRandom;
 			double dx = - this->vitesse * sin(this->_angle*PI/180);
 			double dy = this->vitesse * cos(this->_angle*PI/180);
+			move(dx,dy);
 		}
 	}
 	// S'il n'a pas changé de case, on reste avec le même angle
@@ -191,8 +193,6 @@ void Gardien::modeDefense(){
 //angle, l'angle vers lequel on se déplace
 int Gardien::caseProche(int x, int y){
 	Labyrinthe* lab = ((Labyrinthe*) _l);
-	int cx = x;
-	int cy = y;
 	int angle = 0;
 	int minVal = INFINITY;
 
@@ -200,8 +200,6 @@ int Gardien::caseProche(int x, int y){
 	int haut = lab->getDistanceTresor(x-1,y);
 	if (haut < minVal){
 		minVal = haut;
-		cx = x-1;
-		cy = y;
 		angle = 90;
 	}
 
@@ -209,8 +207,6 @@ int Gardien::caseProche(int x, int y){
 	int bas = lab->getDistanceTresor(x+1,y);
 	if (bas < minVal){
 		minVal = haut;
-		cx = x+1;
-		cy = y;
 		angle = 270;
 	}
 
@@ -218,8 +214,6 @@ int Gardien::caseProche(int x, int y){
 	int gauche = lab->getDistanceTresor(x,y-1);
 	if (gauche < minVal){
 		minVal = gauche;
-		cx = x;
-		cy = y-1;
 		angle = 180;
 	}
 
@@ -227,8 +221,6 @@ int Gardien::caseProche(int x, int y){
 	int droite = lab->getDistanceTresor(x,y+1);
 	if (droite < minVal){
 		minVal = droite;
-		cx = x;
-		cy = y+1;
 		angle = 0;
 	}
 
@@ -236,8 +228,6 @@ int Gardien::caseProche(int x, int y){
 	int hautdroite = lab->getDistanceTresor(x-1,y+1);
 	if (hautdroite < minVal){
 		minVal = hautdroite;
-		cx = x-1;
-		cy = y+1;
 		angle = 45;
 	}
 
@@ -245,8 +235,6 @@ int Gardien::caseProche(int x, int y){
 	int hautgauche = lab->getDistanceTresor(x-1,y-1);
 	if (hautgauche < minVal){
 		minVal = hautgauche;
-		cx = x-1;
-		cy = y-1;
 		angle = 135;
 	}
 
@@ -254,8 +242,6 @@ int Gardien::caseProche(int x, int y){
 	int basdroite = lab->getDistanceTresor(x+1,y+1);
 	if (basdroite < minVal){
 		minVal = basdroite;
-		cx = x+1;
-		cy = y+1;
 		angle = 315;
 	}
 
@@ -263,8 +249,6 @@ int Gardien::caseProche(int x, int y){
 	int basgauche = lab->getDistanceTresor(x-1,y+1);
 	if (basgauche < minVal){
 		minVal = basgauche;
-		cx = x-1;
-		cy = y+1;
 		angle = 225;
 	}
 	return angle;
