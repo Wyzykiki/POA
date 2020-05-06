@@ -14,12 +14,13 @@ private:
 	float vitesse = 0.5;
 	bool fireBallActive = false;
 	float potentielDefense = 1; //Initialisé le plus loin du trésor
+	int pointDeVie = 3;
 	bool mort = false;
 
 	/** Mode Patrouille */
 	void patrol();
+	/** Mode Défense */
 	void modeDefense();
-
 	/** Scanne ses environs */
 	void scout();
 	/** Mode attaque */
@@ -39,6 +40,9 @@ public:
 	void fire (int angle_vertical);
 
 	bool process_fireball (float dx, float dy);
+
+	/** Le gardien a pris un dégat */
+	void hit();
 };
 
 #endif

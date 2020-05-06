@@ -35,7 +35,7 @@ void Gardien::patrol() {
 
 	/** S'il c'est tourné, il reviens à ça position initiale */
 	if (turned)
-		std::cout<<"Pas arriere "<<move(-dx, -dy)<<std::endl;
+		move(-dx, -dy);
 }
 
 void Gardien::scout() {
@@ -46,19 +46,14 @@ void Gardien::scout() {
 	float alpha = acos((hunter->_y - this->_y) / distHunter);
 
 	if (hunter->_x > this->_x) {
-		alpha = 2 * PI - alpha; 
+		alpha = 2 * PI - alpha;
 	}
-		
-	std::cout<<alpha*180/PI<<std::endl;
 
 	if (distHunter <= visionRange ) {
 
 		/** Vecteur (unitaire) collinéaire à la droite entre le gardien et le chasseur */
 		double dx = -sin(alpha);
 		double dy = cos(alpha);
-		// std::cout<<"("<<dx<<","<<dy<<")"<<std::endl;
-		
-		
 
 		int i = 1;
 
@@ -70,29 +65,23 @@ void Gardien::scout() {
 		int lookX = (int) round((this->_x+i*dx)/Environnement::scale);
 		int lookY = (int) round((this->_y+i*dy)/Environnement::scale);
 
+		/** La case physique du chasseur */
 		int hunterX = (int) round((hunter->_x)/Environnement::scale);
 		int hunterY = (int) round((hunter->_y)/Environnement::scale);
+
 		while((lookX == guardianX && lookY == guardianY) || ((lookX != hunterX || lookY != hunterY) && this->_l->data(lookX, lookY) == 0)) {
 			i++;
 			lookX = (int) round((this->_x+i*dx)/Environnement::scale);
 			lookY = (int) round((this->_y+i*dy)/Environnement::scale);
 		}
 
-		std::cout<<hunterX<<" "<<hunterY<<std::endl;
-
 		/** S'il a vu le chasseur */
-		if (lookX == hunterX && lookY == hunterY) {
-			char* tmp = new char[128];
-			sprintf(tmp,"Vu");
-			message(tmp);
-			std::cout<<"Vu"<<std::endl;
-			
+		if (lookX == hunterX && lookY == hunterY) {			
 			Labyrinthe* lab = ((Labyrinthe*) _l);
 			lab->updateLastPos(hunterX, hunterY, (alpha*180/PI));
 			
 			this->etat = EtatGardien::attaque;
 		}
-
 	}
 }
 
@@ -100,8 +89,7 @@ void Gardien::attack() {
 	Labyrinthe* lab = ((Labyrinthe*) _l);
 	int* lastPos = lab->getLastPos();
 
-	// std::cout<<lastPos[2] << " " << this->_angle<<std::endl;
-
+	/** Il se tourne vers la dernière position connue */
 	if (lastPos[2] != this->_angle) {
 
 		if (this->_angle < lastPos[2]) {
@@ -125,11 +113,9 @@ void Gardien::attack() {
 				}
 			}
 		}
-		std::cout<<"turning"<<std::endl;
 	} else {
-		//si pas boule de feu, tirer
+		/** Il tire sa boule de feu, s'il n'en a plus */
 		if (!this->fireBallActive) {
-			std::cout<<"shooting"<<std::endl;
 			this->fire(0);
 			this->fireBallActive = true;
 		}
@@ -138,6 +124,7 @@ void Gardien::attack() {
 		double dx = - this->vitesse * sin(this->_angle*PI/180);
 		double dy = this->vitesse * cos(this->_angle*PI/180);
 		
+		/** S'il se retrouve bloqué, il passe en mode patrouille */
 		if (!move(dx, dy))
 			this->etat = EtatGardien::patrouille;
 
@@ -145,14 +132,11 @@ void Gardien::attack() {
 		int guardianX = (int) round((this->_x)/Environnement::scale);
 		int guardianY = (int) round((this->_y)/Environnement::scale);
 
+		/** Le chasseur est atteint */
 		if (guardianX == lastPos[0] && guardianY == lastPos[1]) {
-			std::cout<<"Chasseur atteint"<<std::endl;
 			this->etat = EtatGardien::patrouille;
 		}
 	}
-
-
-
 }
 
 //Objectif le faire se diriger vers le trésor de manière naturelle
@@ -282,20 +266,21 @@ int Gardien::caseProche(int x, int y){
 }
 
 void Gardien::update() {
-	scout();
-	majPotentielDefense();
-	switch (this->etat) {
-		case patrouille:
-			this->patrol();
-			break;
-		case attaque:
-			this->attack();
-			break;
-		case defense:
-			this->modeDefense();
-			break;
+	if (!this->mort) {
+		this->majPotentielDefense();
+		this->scout();
+		switch (this->etat) {
+			case patrouille:
+				this->patrol();
+				break;
+			case attaque:
+				this->attack();
+				break;
+			case defense:
+				this->modeDefense();
+				break;
+		}
 	}
-	// std::cout<<"tick"<<std::endl;
 }
 
 /** Déplace le gardien si le déplacement est valide */
@@ -340,12 +325,19 @@ bool Gardien::process_fireball (float dx, float dy) {
 	int guardianX = (int) round((this->_x)/Environnement::scale);
 	int guardianY = (int) round((this->_y)/Environnement::scale);
 	
-	if ((ballX == guardianX && ballY == guardianY) || this->_l->data(ballX, ballY) == 0) {
+	Chasseur* hunter = ((Chasseur*) this->_l->_guards[0]);
+
+	/** La case physique du chasseur */
+	int hunterX = round(hunter->_x/ Environnement::scale);
+	int hunterY = round(hunter->_y/ Environnement::scale);
+
+
+	if (((ballX == guardianX && ballY == guardianY) || this->_l->data(ballX, ballY) == 0) && (ballX != hunterX || ballY != hunterY)) {
 		return true;
 	}
 
 	/** Collision */
-	
+
 	/** On joue le son de l'explosion */
 
 	float hitX = (this->_fb ->get_x() + dx - this->_x) / Environnement::scale;
@@ -354,22 +346,32 @@ bool Gardien::process_fireball (float dx, float dy) {
 	float distHit = hitX*hitX + hitY*hitY;
 	float distMax = this->_l->width()*this->_l->width() + this->_l->height()*this->_l->height();
 
-	Chasseur* hunter = ((Chasseur*) this->_l->_guards[0]);
 	hunter->_wall_hit->play(1. - distHit/distMax);
 
-	/** -- */
 
-	// if (ballX == this->_l->_treasor._x && ballY == this->_l->_treasor._y) {
-	// 	this->fireBallActive = false;
-	// 	return false;
-	// }
+	/** Le gardien touche le chasseur */
+	if (ballX == hunterX && ballY == hunterY) {
+		hunter->hit();
+	}
 
+	/** Le gardien touche un autre gardien */
+	for (int i=1; i<this->_l->_nguards; i++) {
+		Gardien* guard = ((Gardien*) this->_l->_guards[i]);
+
+		/** La case physique de l'autre gardien */
+		int guardX = round(guard->_x/ Environnement::scale);
+		int guardY = round(guard->_y/ Environnement::scale);
+
+		if (ballX == guardX && ballY == guardY) {
+			guard->hit();
+		}
+	}
 	
 	this->fireBallActive = false;
 	return false;
 }
 
-void Gardien::majPotentielDefense(){
+void Gardien::majPotentielDefense() {
 	Labyrinthe* lab = ((Labyrinthe*) _l);
 
 	int dActuelle =  lab->getDistanceTresor((int) round(this->_x/Environnement::scale), (int) round(this->_y/Environnement::scale));
@@ -406,3 +408,19 @@ void Gardien::majPotentielDefense(){
 			}
 		}
 	}
+}
+
+void Gardien::hit() {
+	if (this->pointDeVie > 0) {
+		this->pointDeVie--;
+		this->tomber();
+		if (this->pointDeVie == 0) {
+			this->mort = true;
+			this->rester_au_sol();
+
+			/** On peut marcher sur un cadavre */
+			Labyrinthe* lab = ((Labyrinthe*) _l);
+			lab->setData((int) round(this->_x/Environnement::scale), (int) round(this->_y/Environnement::scale), 0);
+		}
+	}
+}

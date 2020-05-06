@@ -1,4 +1,6 @@
 #include "Chasseur.h"
+#include "Gardien.h"
+#include <cmath>
 
 /*
  *	Tente un deplacement.
@@ -59,6 +61,20 @@ bool Chasseur::process_fireball (float dx, float dy)
 	{
 		partie_terminee (true);
 	}
+
+	for (int i=1; i<this->_l->_nguards; i++) {
+		Gardien* guard = ((Gardien*) this->_l->_guards[i]);
+
+		int guardX = round(guard->_x/ Environnement::scale);
+		int guardY = round(guard->_y/ Environnement::scale);
+
+
+		if ((int)((_fb -> get_x () + dx) / Environnement::scale) == guardX &&
+			(int)((_fb -> get_y () + dy) / Environnement::scale) == guardY) {
+				guard->hit();
+		}
+	}
+
 	return false;
 }
 
@@ -86,4 +102,13 @@ void Chasseur::right_click (bool shift, bool control) {
 		_l -> _guards [1] -> rester_au_sol ();
 	else
 		_l -> _guards [1] -> tomber ();
+}
+
+void Chasseur::hit() {
+	if (this->pointDeVie > 0) {
+		this->pointDeVie--;
+		if (this->pointDeVie == 0) {
+			partie_terminee(false);
+		}
+	}
 }

@@ -11,6 +11,8 @@ class Chasseur : public Mover {
 private:
 	// accepte ou non un deplacement.
 	bool move_aux (double dx, double dy);
+
+	int pointDeVie = 15;
 public:
 	/*
 	 *	Le son...
@@ -32,6 +34,9 @@ public:
 	void fire (int angle_vertical);
 	// clic droit.
 	void right_click (bool shift, bool control);
+
+	/** Le chasseur a pris un dégat */
+	void hit();
 };
 
 #endif
