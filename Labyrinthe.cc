@@ -30,6 +30,7 @@ Labyrinthe::Labyrinthe (char* filename){
 	this->_npicts = 0;
 	this->_nboxes = 0;
 	this->_nguards = 1;
+	this->nPads = 0;
 	
 	//Le nombres de jonction de mur
 	int nbCorners = 0;
@@ -75,6 +76,10 @@ Labyrinthe::Labyrinthe (char* filename){
 							default:
 								if (line[i] >= 'a' && line[i] <= 'z') {
 									this->_npicts++;
+								} else {
+									if (line[i] >= '1' && line[i] <= '9') {
+										this->nPads++;
+									}
 								}
 								break;
 						}
@@ -107,6 +112,10 @@ Labyrinthe::Labyrinthe (char* filename){
 	this->_guards = new Mover*[this->_nguards];
 	int indexGuardian = 1, hunter_x, hunter_y;
 
+	//Initialisation des téléporteurs
+	this->pads = new TeleportPad[this->nPads];
+	int indexPads = 0;
+
     int i = 0;
 	file.open(filename);
     while (getline(file, line)) {
@@ -124,7 +133,7 @@ Labyrinthe::Labyrinthe (char* filename){
 			while (j < this->lab_height+1) {
 
 				if (j < this->lab_height) {
-					this->_data[i][j] = (line[j] != ' ' && line[j] != 'C');
+					this->_data[i][j] = ((line[j] != ' ' && line[j] != 'C') && !(line[j] >= '1' && line[j] <= '9'));
 				}
 
 				if (j < sizeLine) {
@@ -167,6 +176,15 @@ Labyrinthe::Labyrinthe (char* filename){
 							hunter_x = i;
 							hunter_y = j;
 							break;
+						default:
+							if (line[j] >= '1' && line[j] <= '9') {
+								this->pads[indexPads].id = line[j];
+								this->pads[indexPads].x = i;
+								this->pads[indexPads].y = j;
+								this->pads[indexPads].sibling = &(this->pads[indexPads]);
+								indexPads++;
+							}
+							break;
 					}
 
 				} else {
@@ -183,6 +201,19 @@ Labyrinthe::Labyrinthe (char* filename){
 		matFile[this->lab_width][j] = ' ';
 	}
 
+	//On relie les téleporteurs
+	for (int j=0; j<this->nPads; j++) {
+		int k=j+1;
+		bool founded = false;
+		while (this->pads[j].sibling == &(this->pads[j]) && !founded && k<this->nPads) {
+			if (this->pads[j].id == this->pads[k].id) {
+				founded = true;
+				this->pads[j].sibling = &(this->pads[k]);
+				this->pads[k].sibling = &(this->pads[j]);
+			}
+			k++;
+		}
+	}
 
 	//Chaque jonction peut être touché par 4 mur maximum (on prend au plus large)
 	Wall* tooMuchWalls = new Wall[nbCorners*4];
@@ -331,7 +362,7 @@ Labyrinthe::Labyrinthe (char* filename){
 
 		//On calcule la distance, si c'est C, G ou ' ' ok 
 		//Case en haut
-		if (matFile[x-1][y] == ' ' || matFile[x-1][y] == 'C' || matFile[x-1][y] == 'G' ){
+		if (matFile[x-1][y] == ' ' || matFile[x-1][y] == 'C' || matFile[x-1][y] == 'G' || (matFile[x-1][y] >= '1' && matFile[x-1][y] <= '9')){
 			if (this->treasor_distance[x-1][y]>d){
 				this->treasor_distance[x-1][y] = d;
 				fileCase.push(x-1);
@@ -340,7 +371,7 @@ Labyrinthe::Labyrinthe (char* filename){
 			}
 		}
 		//Case en bas
-		if (matFile[x+1][y] == ' ' || matFile[x+1][y] == 'C' || matFile[x+1][y] == 'G' ){
+		if (matFile[x+1][y] == ' ' || matFile[x+1][y] == 'C' || matFile[x+1][y] == 'G' || (matFile[x+1][y] >= '1' && matFile[x+1][y] <= '9')){
 			if (this->treasor_distance[x+1][y]>d){
 				this->treasor_distance[x+1][y] = d;
 				fileCase.push(x+1);
@@ -349,7 +380,7 @@ Labyrinthe::Labyrinthe (char* filename){
 			}
 		}
 		//Case à gauche
-		if (matFile[x][y-1] == ' ' || matFile[x][y-1] == 'C' || matFile[x][y-1] == 'G' ){
+		if (matFile[x][y-1] == ' ' || matFile[x][y-1] == 'C' || matFile[x][y-1] == 'G' || (matFile[x][y-1] >= '1' && matFile[x][y-1] <= '9')){
 			if (this->treasor_distance[x][y-1]>d){
 				this->treasor_distance[x][y-1] = d;
 				fileCase.push(x);
@@ -359,7 +390,7 @@ Labyrinthe::Labyrinthe (char* filename){
 		}
 
 		//Case à droite
-		if (matFile[x][y+1] == ' ' || matFile[x][y+1] == 'C' || matFile[x][y+1] == 'G' ){
+		if (matFile[x][y+1] == ' ' || matFile[x][y+1] == 'C' || matFile[x][y+1] == 'G' || (matFile[x][y+1] >= '1' && matFile[x][y+1] <= '9')){
 			if (this->treasor_distance[x][y+1]>d){
 				this->treasor_distance[x][y+1] = d;
 				fileCase.push(x);
@@ -370,7 +401,7 @@ Labyrinthe::Labyrinthe (char* filename){
 
 
 		//Case en haut à droite
-		if (matFile[x-1][y+1] == ' ' || matFile[x-1][y+1] == 'C' || matFile[x-1][y+1] == 'G' ){
+		if (matFile[x-1][y+1] == ' ' || matFile[x-1][y+1] == 'C' || matFile[x-1][y+1] == 'G' || (matFile[x-1][y+1] >= '1' && matFile[x-1][y+1] <= '9')){
 			if (this->treasor_distance[x-1][y+1]>d){
 				this->treasor_distance[x-1][y+1] = d;
 				fileCase.push(x-1);
@@ -379,7 +410,7 @@ Labyrinthe::Labyrinthe (char* filename){
 			}
 		}
 		//Case en haut à gauche
-		if (matFile[x-1][y-1] == ' ' || matFile[x-1][y-1] == 'C' || matFile[x-1][y-1] == 'G' ){
+		if (matFile[x-1][y-1] == ' ' || matFile[x-1][y-1] == 'C' || matFile[x-1][y-1] == 'G' || (matFile[x-1][y-1] >= '1' && matFile[x-1][y-1] <= '9')){
 			if (this->treasor_distance[x-1][y-1]>d){
 				this->treasor_distance[x-1][y-1] = d;
 				fileCase.push(x-1);
@@ -388,7 +419,7 @@ Labyrinthe::Labyrinthe (char* filename){
 			}
 		}
 		//Case en bas à droite
-		if (matFile[x+1][y+1] == ' ' || matFile[x+1][y+1] == 'C' || matFile[x+1][y+1] == 'G' ){
+		if (matFile[x+1][y+1] == ' ' || matFile[x+1][y+1] == 'C' || matFile[x+1][y+1] == 'G' || (matFile[x+1][y+1] >= '1' && matFile[x+1][y+1] <= '9')){
 			if (this->treasor_distance[x+1][y+1]>d){
 				this->treasor_distance[x+1][y+1] = d;
 				fileCase.push(x+1);
@@ -398,7 +429,7 @@ Labyrinthe::Labyrinthe (char* filename){
 		}
 
 		//Case en bas à gauche
-		if (matFile[x+1][y-1] == ' ' || matFile[x+1][y-1] == 'C' || matFile[x+1][y-1] == 'G' ){
+		if (matFile[x+1][y-1] == ' ' || matFile[x+1][y-1] == 'C' || matFile[x+1][y-1] == 'G' || (matFile[x+1][y-1] >= '1' && matFile[x+1][y-1] <= '9')){
 			if (this->treasor_distance[x+1][y-1]>d){
 				this->treasor_distance[x+1][y-1] = d;
 				fileCase.push(x+1);

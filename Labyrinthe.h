@@ -3,6 +3,13 @@
 
 #include "Environnement.h"
 
+struct TeleportPad {
+	char id;
+	int x;
+	int y;
+	TeleportPad* sibling;
+};
+
 class Labyrinthe : public Environnement {
 private:
 	char	**_data;	// indique si la case est libre ou occup�e.
@@ -19,6 +26,11 @@ public:
 	Labyrinthe (char*);
 	int width () { return lab_width;}	// retourne la largeur du labyrinthe.
 	int height () { return lab_height;}	// retourne la longueur du labyrinthe.
+	
+	/** Les socles de téléportations */
+	TeleportPad* pads;
+	int nPads;
+
 	/* Distance la plus grande entre une case et un trésor*/
 	float distanceMax;
 

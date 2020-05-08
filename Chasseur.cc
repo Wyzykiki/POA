@@ -1,5 +1,6 @@
 #include "Chasseur.h"
 #include "Gardien.h"
+#include "Labyrinthe.h"
 #include <cmath>
 
 /*
@@ -8,14 +9,36 @@
 
 bool Chasseur::move_aux (double dx, double dy)
 {
-	if (EMPTY == _l -> data ((int)((_x + dx) / Environnement::scale),
-							 (int)((_y + dy) / Environnement::scale)))
-	{
-		_x += dx;
-		_y += dy;
+	/** La case physique où il se trouve avant son déplacement */
+	int preMoveI = (int) this->_x/Environnement::scale;
+	int preMoveJ = (int) this->_y/Environnement::scale;
+
+	/** La case physique où il se trouve après son déplacement */
+	int postMoveI = (int) (this->_x+dx)/Environnement::scale;
+	int postMoveJ = (int) (this->_y+dy)/Environnement::scale;
+
+
+	if (this->_l->data(postMoveI, postMoveJ) == 1) {
+		return false;
+	} else {
+
+		/** Vérification si le chasseur utilise un téléporteur */
+		if (postMoveI!=preMoveI || postMoveJ !=preMoveJ) {
+
+			Labyrinthe* lab = ((Labyrinthe*) _l);
+			for (int i=0; i<lab->nPads; i++) {
+				if (postMoveI == lab->pads[i].x && postMoveJ == lab->pads[i].y) {
+					this->_x = lab->pads[i].sibling->x*Environnement::scale+1;
+					this->_y = lab->pads[i].sibling->y*Environnement::scale;
+				}
+			}
+		}
+
+		this->_x += dx;
+		this->_y += dy;
+
 		return true;
 	}
-	return false;
 }
 
 /*
