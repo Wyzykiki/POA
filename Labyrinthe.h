@@ -10,6 +10,13 @@ struct TeleportPad {
 	TeleportPad* sibling;
 };
 
+struct BreakableWall {
+	int x;
+	int y;
+	int pictIndex;
+	bool broken = false;
+};
+
 class Labyrinthe : public Environnement {
 private:
 	char	**_data;	// indique si la case est libre ou occup�e.
@@ -30,6 +37,10 @@ public:
 	/** Les socles de téléportations */
 	TeleportPad* pads;
 	int nPads;
+
+	/** Les murs cassables */
+	BreakableWall* bWalls;
+	int nBWalls;
 
 	/* Distance la plus grande entre une case et un trésor*/
 	float distanceMax;
@@ -59,6 +70,9 @@ public:
 	{
 		return treasor_distance [i][j];
 	}
+
+	/** Casse le i-ème mur */
+	void breakWall(int index);
 };
 
 #endif

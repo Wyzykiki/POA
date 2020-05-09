@@ -29,12 +29,16 @@ Labyrinthe::Labyrinthe (char* filename){
 	this->_nboxes = 0;
 	this->_nguards = 1;
 	this->nPads = 0;
+	this->nBWalls = 0;
 	
 	//Le nombres de jonction de mur
 	int nbCorners = 0;
 
 	//Map (lettre, filename) pour les affiches
 	std::map<char, std::string> affiches;
+
+	//Définition de la texture pour les murs cassables
+	affiches['*'] = std::string("breakable.jpg");
 
 	//La ligne courante du fichier
 	std::string line;
@@ -77,6 +81,11 @@ Labyrinthe::Labyrinthe (char* filename){
 								} else {
 									if (line[i] >= '1' && line[i] <= '9') {
 										this->nPads++;
+									} else {
+										if (line[i] == '*') {
+											this->nBWalls++;
+											this->_npicts++;
+										}
 									}
 								}
 								break;
@@ -223,25 +232,31 @@ Labyrinthe::Labyrinthe (char* filename){
 	this->_picts = new Wall[this->_npicts];
 	int indexPicts = 0;
 
+	//Initialisation des murs cassables
+	this->bWalls = new BreakableWall[this->nBWalls];
+	int indexBWalls = 0;
+
 	// Passe mur horizontaux
 	for (int x=0; x<this->lab_width; x++) {
 		int y=0;
 		while (y<this->lab_height) {
-			if (matFile[x][y] == '+' && (matFile[x][y+1] == '-' || matFile[x][y+1] == '+' || (matFile[x][y+1] >= 'a' && matFile[x][y+1] <= 'z'))) {
+			if (matFile[x][y] == '+' && (matFile[x][y+1] == '-' || matFile[x][y+1] == '*' || matFile[x][y+1] == '+' || (matFile[x][y+1] >= 'a' && matFile[x][y+1] <= 'z'))) {
 				tooMuchWalls[indexWall]._x1 = x;
 				tooMuchWalls[indexWall]._y1 = y;
 				y++;
-				while (matFile[x][y] == '-' || (matFile[x][y] >= 'a' && matFile[x][y] <= 'z')) {
+				while (matFile[x][y] == '-' || matFile[x][y] == '*' || (matFile[x][y] >= 'a' && matFile[x][y] <= 'z')) {
 					//Affichage de l'affiche
-					if (matFile[x][y] >= 'a' && matFile[x][y] <= 'z') {
+					if ((matFile[x][y] >= 'a' && matFile[x][y] <= 'z') || matFile[x][y] == '*') {
 						this->_picts[indexPicts]._x1 = x;
-						this->_picts[indexPicts]._y1 = y;
+						this->_picts[indexPicts]._y1 = y-1;
 						this->_picts[indexPicts]._x2 = x;
-						this->_picts[indexPicts]._y2 = y+2;
-						//Si l'affiche est collée à un mur Est (va déborder), on la décale de 1 sur la gauche
-						if (matFile[x][y+1] == '+') {
-							this->_picts[indexPicts]._y1--;
-							this->_picts[indexPicts]._y2--;
+						this->_picts[indexPicts]._y2 = y+1;
+
+						if (matFile[x][y] == '*') {
+							this->bWalls[indexBWalls].x = x;
+							this->bWalls[indexBWalls].y = y;
+							this->bWalls[indexBWalls].pictIndex = indexPicts;
+							indexBWalls++;
 						}
 
 						char* path = new char[128];
@@ -268,21 +283,23 @@ Labyrinthe::Labyrinthe (char* filename){
 	for (int y=0; y<this->lab_height; y++) {
 		int x=0;
 		while (x<this->lab_width) {
-			if (matFile[x][y] == '+' && (matFile[x+1][y] == '|' || matFile[x+1][y] == '+' || (matFile[x+1][y] >= 'a' && matFile[x+1][y] <= 'z'))) {
+			if (matFile[x][y] == '+' && (matFile[x+1][y] == '|' || matFile[x+1][y] == '*' || matFile[x+1][y] == '+' || (matFile[x+1][y] >= 'a' && matFile[x+1][y] <= 'z'))) {
 				tooMuchWalls[indexWall]._x1 = x;
 				tooMuchWalls[indexWall]._y1 = y;
 				x++;
-				while (matFile[x][y] == '|' || (matFile[x][y] >= 'a' && matFile[x][y] <= 'z')) {
+				while (matFile[x][y] == '|' || matFile[x][y] == '*' || (matFile[x][y] >= 'a' && matFile[x][y] <= 'z')) {
 					//Affichage de l'affiche
-					if (matFile[x][y] >= 'a' && matFile[x][y] <= 'z') {
-						this->_picts[indexPicts]._x1 = x;
+					if ((matFile[x][y] >= 'a' && matFile[x][y] <= 'z') || matFile[x][y] == '*') {
+						this->_picts[indexPicts]._x1 = x-1;
 						this->_picts[indexPicts]._y1 = y;
-						this->_picts[indexPicts]._x2 = x+2;
+						this->_picts[indexPicts]._x2 = x+1;
 						this->_picts[indexPicts]._y2 = y;
-						//Si l'affiche est collée à un mur Sud (va déborder), on la décale de 1 vers le haut
-						if (matFile[x+1][y] == '+') {
-							this->_picts[indexPicts]._x1--;
-							this->_picts[indexPicts]._x2--;
+
+						if (matFile[x][y] == '*') {
+							this->bWalls[indexBWalls].x = x;
+							this->bWalls[indexBWalls].y = y;
+							this->bWalls[indexBWalls].pictIndex = indexPicts;
+							indexBWalls++;
 						}
 
 						char* path = new char[128];
@@ -452,5 +469,20 @@ Labyrinthe::Labyrinthe (char* filename){
 				this->distanceMax = this->treasor_distance[x][y];
 			}
 		}
+	}
+}
+
+void Labyrinthe::breakWall(int index) {
+
+	if (!this->bWalls[index].broken) {
+		this->bWalls[index].broken = true;
+		this->_data[this->bWalls[index].x][this->bWalls[index].y] = 0;
+
+		//Change la texture du mur cassé
+		char* path = new char[128];
+		strcpy(path, this->texture_dir);
+		strcat(path, "/broken.jpg");
+		this->_picts[this->bWalls[index].pictIndex]._ntex = this->wall_texture(path);
+		this->reconfigure();
 	}
 }

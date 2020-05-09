@@ -30,7 +30,7 @@ bool Chasseur::move_aux (double dx, double dy)
 			Labyrinthe* lab = ((Labyrinthe*) _l);
 			for (int i=0; i<lab->nPads; i++) {
 				if (postMoveI == lab->pads[i].x && postMoveJ == lab->pads[i].y) {
-					this->_x = lab->pads[i].sibling->x*Environnement::scale+1;
+					this->_x = lab->pads[i].sibling->x*Environnement::scale+2;
 					this->_y = lab->pads[i].sibling->y*Environnement::scale+2;
 				}
 			}
@@ -65,9 +65,13 @@ bool Chasseur::process_fireball (float dx, float dy)
 	float	x = (_x - _fb -> get_x ()) / Environnement::scale;
 	float	y = (_y - _fb -> get_y ()) / Environnement::scale;
 	float	dist2 = x*x + y*y;
+
+	/** Position de la boule après le déplacement */
+	int ballX = (this->_fb ->get_x() + dx) / Environnement::scale;
+	int ballY = (this->_fb ->get_y() + dy) / Environnement::scale;
+
 	// on bouge que dans le vide!
-	if (EMPTY == _l -> data ((int)((_fb -> get_x () + dx) / Environnement::scale),
-							 (int)((_fb -> get_y () + dy) / Environnement::scale)))
+	if (EMPTY == _l -> data (ballX, ballY))
 	{
 		message ("Woooshh ..... %d", (int) dist2);
 		// il y a la place.
@@ -81,8 +85,7 @@ bool Chasseur::process_fireball (float dx, float dy)
 	message ("Booom...");
 	// teste si on a touch� le tr�sor: juste pour montrer un exemple de la
 	// fonction � partie_terminee �.
-	if ((int)((_fb -> get_x () + dx) / Environnement::scale) == _l -> _treasor._x &&
-		(int)((_fb -> get_y () + dy) / Environnement::scale) == _l -> _treasor._y)
+	if (ballX == _l->_treasor._x && ballY == _l->_treasor._y)
 	{
 		partie_terminee (true);
 	}
@@ -94,9 +97,16 @@ bool Chasseur::process_fireball (float dx, float dy)
 		int guardY = round(guard->_y/ Environnement::scale);
 
 
-		if ((int)((_fb -> get_x () + dx) / Environnement::scale) == guardX &&
-			(int)((_fb -> get_y () + dy) / Environnement::scale) == guardY) {
-				guard->hit();
+		if (ballX == guardX && ballY == guardY) {
+			guard->hit();
+		}
+	}
+
+	Labyrinthe* lab = ((Labyrinthe*) _l);
+
+	for (int i=0; i<lab->nBWalls; i++) {
+		if (ballX == lab->bWalls[i].x && ballY == lab->bWalls[i].y) {
+			lab->breakWall(i);
 		}
 	}
 
@@ -123,10 +133,10 @@ void Chasseur::fire (int angle_vertical)
  */
 
 void Chasseur::right_click (bool shift, bool control) {
-	if (shift)
-		_l -> _guards [1] -> rester_au_sol ();
-	else
-		_l -> _guards [1] -> tomber ();
+	// if (shift)
+	// 	_l -> _guards [1] -> rester_au_sol ();
+	// else
+	// 	_l -> _guards [1] -> tomber ();
 }
 
 void Chasseur::hit() {
