@@ -9,8 +9,6 @@
 #include <iostream>
 #define INFINITY 9999
 
-using namespace std;
-
 Sound*	Chasseur::_hunter_fire;	// bruit de l'arme du chasseur.
 Sound*	Chasseur::_hunter_hit;	// cri du chasseur touch�.
 Sound*	Chasseur::_wall_hit;	// on a tap� un mur.
@@ -36,26 +34,26 @@ Labyrinthe::Labyrinthe (char* filename){
 	int nbCorners = 0;
 
 	//Map (lettre, filename) pour les affiches
-	map<char, string> affiches;
+	std::map<char, std::string> affiches;
 
 	//La ligne courante du fichier
-	string line;
+	std::string line;
 
 	//Indique si l'on est dans la partie du dessin du labyrinthe; dans le fichier
 	bool zoneLaby = false;
 
 	//=========== Première passe fichier ==================
-	ifstream file(filename, ifstream::in);
+	std::ifstream file(filename, std::ifstream::in);
 	while (getline(file, line)) {
 		if (line[0] != '#' && line != "") {
 			
-			if (!zoneLaby && line[0] == '+') {
+			if (!zoneLaby && line.find('+') != std::string::npos) {
 				zoneLaby = true;
 			}
 
 			//Définition d'une affiche
 			if (!zoneLaby && line[0] >= 'a' && line[0] <= 'z') {
-				affiches[line[0]] = string(line, 2, string::npos);
+				affiches[line[0]] = std::string(line, 2, std::string::npos);
 			}
 
 			if (zoneLaby) {
@@ -119,7 +117,7 @@ Labyrinthe::Labyrinthe (char* filename){
     int i = 0;
 	file.open(filename);
     while (getline(file, line)) {
-		if (!zoneLaby && line[0] == '+') {
+		if (!zoneLaby && line.find('+') != std::string::npos) {
 			zoneLaby = true;
 		}
 		//On est dans la zone du labyrinthe
@@ -330,7 +328,7 @@ Labyrinthe::Labyrinthe (char* filename){
 
 	
 	//La file qui va nous permettre de stocker les cases à traiter au fur et à mesure.
-	queue<int> fileCase;
+	std::queue<int> fileCase;
 	//On initialise la matrice des distances. Le trésor est à 0 et le reste à une distance infinie
 	for (int a = 0; a < this->lab_width; a++) {
 		this->treasor_distance[a] = new int[this->lab_height];
@@ -439,12 +437,12 @@ Labyrinthe::Labyrinthe (char* filename){
 		}
 	}
 	// Affichage treasor
-	for (int a = 0; a < this->lab_width; a++) {
-        for (int b = 0; b < this->lab_height; b++) {
-			cout<<treasor_distance[a][b];
-		}
-		cout<<endl;
-	}
+	// for (int a = 0; a < this->lab_width; a++) {
+    //     for (int b = 0; b < this->lab_height; b++) {
+	// 		std::cout<<treasor_distance[a][b];
+	// 	}
+	// 	std::cout<<std::endl;
+	// }
 
 	this->distanceMax = 0.0;
 	//On calcule la distance max qu'il y a dans le labyrinthe
