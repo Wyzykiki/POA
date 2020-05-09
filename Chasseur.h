@@ -12,7 +12,12 @@ private:
 	// accepte ou non un deplacement.
 	bool move_aux (double dx, double dy);
 
-	int pointDeVie = 15;
+	/** Gestion des points de vie */
+	int vieMax = 15;
+	int pointDeVie = vieMax;
+	int tempsRegen = 8;
+	int lastHit = 0;
+
 public:
 	/*
 	 *	Le son...
@@ -27,7 +32,7 @@ public:
 		return move_aux (dx, dy) || move_aux (dx, 0.0) || move_aux (0.0, dy);
 	}
 	// le chasseur ne pense pas!
-	void update (void) {};
+	void update();
 	// fait bouger la boule de feu (ceci est une exemple, � vous de traiter les collisions sp�cifiques...)
 	bool process_fireball (float dx, float dy);
 	// tire sur un ennemi (clic gauche).

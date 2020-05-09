@@ -14,7 +14,13 @@ private:
 	float vitesse = 0.5;
 	bool fireBallActive = false;
 	float potentielDefense = 1; //Initialisé le plus loin du trésor
-	int pointDeVie = 3;
+	
+	/** Gestion des points de vie */
+	int vieMax = 3;
+	int pointDeVie = vieMax;
+	int tempsRegen = 8;
+	int lastHit = 0;
+
 	bool mort = false;
 	bool changeCase = false ;
 

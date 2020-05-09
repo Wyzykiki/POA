@@ -2,6 +2,8 @@
 #include "Gardien.h"
 #include "Labyrinthe.h"
 #include <cmath>
+#include <ctime>
+#include <algorithm>
 
 /*
  *	Tente un deplacement.
@@ -29,7 +31,7 @@ bool Chasseur::move_aux (double dx, double dy)
 			for (int i=0; i<lab->nPads; i++) {
 				if (postMoveI == lab->pads[i].x && postMoveJ == lab->pads[i].y) {
 					this->_x = lab->pads[i].sibling->x*Environnement::scale+1;
-					this->_y = lab->pads[i].sibling->y*Environnement::scale;
+					this->_y = lab->pads[i].sibling->y*Environnement::scale+2;
 				}
 			}
 		}
@@ -133,5 +135,14 @@ void Chasseur::hit() {
 		if (this->pointDeVie == 0) {
 			partie_terminee(false);
 		}
+	}
+	this->lastHit = time(NULL);
+}
+
+void Chasseur::update() {
+	/** Gestion des points de vie */
+	if (time(NULL) - this->lastHit > this->tempsRegen) {
+		this->lastHit = time(NULL);
+		this->pointDeVie = std::min(this->vieMax, this->pointDeVie+1);
 	}
 }

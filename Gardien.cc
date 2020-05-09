@@ -2,6 +2,7 @@
 #include "Labyrinthe.h"
 #include "Chasseur.h"
 #include <cmath>
+#include <ctime>
 #include <iostream> //TODO: remove
 
 #define INFINITY 9999
@@ -239,7 +240,19 @@ int Gardien::caseProche(int x, int y){
 }
 
 void Gardien::update() {
+	/** Permet au gardien de regagner des points de vies */
+	if (this == this->_l->_guards[1]) {
+		this->_l->_guards[0]->update();
+	}
+
 	if (!this->mort) {
+
+		/** Gestion des points de vie */
+		if (time(NULL) - this->lastHit > this->tempsRegen) {
+			this->lastHit = time(NULL);
+			this->pointDeVie = std::min(this->vieMax, this->pointDeVie+1);
+		}
+
 		this->majPotentielDefense();
 		this->scout();
 		switch (this->etat) {
@@ -406,4 +419,5 @@ void Gardien::hit() {
 			lab->setData((int) round(this->_x/Environnement::scale), (int) round(this->_y/Environnement::scale), 0);
 		}
 	}
+	this->lastHit = time(NULL);
 }
