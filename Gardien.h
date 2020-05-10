@@ -14,7 +14,7 @@ enum EtatGardien {patrouille, defense, attaque};
 class Gardien : public Mover {
 private:
 	EtatGardien etat = patrouille; // Par défaut le gardien est en mode patrouille au début du jeu
-	int distVision = 5; //La distance de vision qu'a le gardien autours de lui 
+	int distVision = 10; //La distance de vision qu'a le gardien autours de lui 
 	float vitesse = 0.5; // La vitesse à laquelle il se déplace
 	bool fireBallActive = false;
 	float potentielDefense = 1; //Initialisé le plus loin du trésor

@@ -370,7 +370,7 @@ void Gardien::majPotentielDefense() {
 	//Attention le premier gardien est en fait le chasseur.
 	float sumPD = 0.0;
 	int dernierGardienDefense = 0;
-	int seuil = lab->distanceMax;//TODO: Pour le moment on initialise la valeur du seuil à Dmax
+	int seuil = lab->distanceMax;
 
 	//on parcourt la liste des gardiens, en commencant à 0 pour ne pas prendre en compte le chasseur 
 	//sumPD contient la somme du potentiel defense des gardiens
