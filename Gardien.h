@@ -25,7 +25,7 @@ private:
 	int vieMax = 3; // Le nombre maximum de points de vie que peut avoir le gardien au cours d'une partie
 	int pointDeVie = vieMax; //nombre de points de vie qu'à le gardien au début
 	int tempsRegen = 8; //Le nombre de seconde après lequel il peut récupérer un point de vie.
-	int lastHit = 0; // Combien de seconde se sont écoulés depuis la dernière fois ou il s'est fait toucher.
+	int lastHit = 0; // La date de la dernière fois où il s'est fait toucher, ou de la récupération d'un point de vie.
 
 
 	//Définition des différents mode du gardien
