@@ -377,7 +377,7 @@ Labyrinthe::Labyrinthe (char* filename){
 
 		//On calcule la distance, si c'est C, G ou ' ' ok 
 		//Case en haut
-		if (matFile[x-1][y] == ' ' || matFile[x-1][y] == 'C' || matFile[x-1][y] == 'G' || (matFile[x-1][y] >= '1' && matFile[x-1][y] <= '9')){
+		if (matFile[x-1][y] == ' ' || matFile[x-1][y] == 'C' || matFile[x-1][y] == 'G' || (matFile[x-1][y] >= '1' && matFile[x-1][y] <= '9') || matFile[x-1][y] == '*'){
 			if (this->treasor_distance[x-1][y]>d){
 				this->treasor_distance[x-1][y] = d;
 				fileCase.push(x-1);
@@ -386,7 +386,7 @@ Labyrinthe::Labyrinthe (char* filename){
 			}
 		}
 		//Case en bas
-		if (matFile[x+1][y] == ' ' || matFile[x+1][y] == 'C' || matFile[x+1][y] == 'G' || (matFile[x+1][y] >= '1' && matFile[x+1][y] <= '9')){
+		if (matFile[x+1][y] == ' ' || matFile[x+1][y] == 'C' || matFile[x+1][y] == 'G' || (matFile[x+1][y] >= '1' && matFile[x+1][y] <= '9') || matFile[x+1][y] == '*'){
 			if (this->treasor_distance[x+1][y]>d){
 				this->treasor_distance[x+1][y] = d;
 				fileCase.push(x+1);
@@ -395,7 +395,7 @@ Labyrinthe::Labyrinthe (char* filename){
 			}
 		}
 		//Case à gauche
-		if (matFile[x][y-1] == ' ' || matFile[x][y-1] == 'C' || matFile[x][y-1] == 'G' || (matFile[x][y-1] >= '1' && matFile[x][y-1] <= '9')){
+		if (matFile[x][y-1] == ' ' || matFile[x][y-1] == 'C' || matFile[x][y-1] == 'G' || (matFile[x][y-1] >= '1' && matFile[x][y-1] <= '9') || matFile[x][y-1] == '*'){
 			if (this->treasor_distance[x][y-1]>d){
 				this->treasor_distance[x][y-1] = d;
 				fileCase.push(x);
@@ -405,7 +405,7 @@ Labyrinthe::Labyrinthe (char* filename){
 		}
 
 		//Case à droite
-		if (matFile[x][y+1] == ' ' || matFile[x][y+1] == 'C' || matFile[x][y+1] == 'G' || (matFile[x][y+1] >= '1' && matFile[x][y+1] <= '9')){
+		if (matFile[x][y+1] == ' ' || matFile[x][y+1] == 'C' || matFile[x][y+1] == 'G' || (matFile[x][y+1] >= '1' && matFile[x][y+1] <= '9') || matFile[x][y+1] == '*'){
 			if (this->treasor_distance[x][y+1]>d){
 				this->treasor_distance[x][y+1] = d;
 				fileCase.push(x);
@@ -416,7 +416,7 @@ Labyrinthe::Labyrinthe (char* filename){
 
 
 		//Case en haut à droite
-		if (matFile[x-1][y+1] == ' ' || matFile[x-1][y+1] == 'C' || matFile[x-1][y+1] == 'G' || (matFile[x-1][y+1] >= '1' && matFile[x-1][y+1] <= '9')){
+		if (matFile[x-1][y+1] == ' ' || matFile[x-1][y+1] == 'C' || matFile[x-1][y+1] == 'G' || (matFile[x-1][y+1] >= '1' && matFile[x-1][y+1] <= '9') || matFile[x-1][y+1] == '*'){
 			if (this->treasor_distance[x-1][y+1]>d){
 				this->treasor_distance[x-1][y+1] = d;
 				fileCase.push(x-1);
@@ -425,7 +425,7 @@ Labyrinthe::Labyrinthe (char* filename){
 			}
 		}
 		//Case en haut à gauche
-		if (matFile[x-1][y-1] == ' ' || matFile[x-1][y-1] == 'C' || matFile[x-1][y-1] == 'G' || (matFile[x-1][y-1] >= '1' && matFile[x-1][y-1] <= '9')){
+		if (matFile[x-1][y-1] == ' ' || matFile[x-1][y-1] == 'C' || matFile[x-1][y-1] == 'G' || (matFile[x-1][y-1] >= '1' && matFile[x-1][y-1] <= '9') || matFile[x-1][y-1] == '*'){
 			if (this->treasor_distance[x-1][y-1]>d){
 				this->treasor_distance[x-1][y-1] = d;
 				fileCase.push(x-1);
@@ -434,7 +434,7 @@ Labyrinthe::Labyrinthe (char* filename){
 			}
 		}
 		//Case en bas à droite
-		if (matFile[x+1][y+1] == ' ' || matFile[x+1][y+1] == 'C' || matFile[x+1][y+1] == 'G' || (matFile[x+1][y+1] >= '1' && matFile[x+1][y+1] <= '9')){
+		if (matFile[x+1][y+1] == ' ' || matFile[x+1][y+1] == 'C' || matFile[x+1][y+1] == 'G' || (matFile[x+1][y+1] >= '1' && matFile[x+1][y+1] <= '9') || matFile[x+1][y+1] == '*'){
 			if (this->treasor_distance[x+1][y+1]>d){
 				this->treasor_distance[x+1][y+1] = d;
 				fileCase.push(x+1);
@@ -444,7 +444,7 @@ Labyrinthe::Labyrinthe (char* filename){
 		}
 
 		//Case en bas à gauche
-		if (matFile[x+1][y-1] == ' ' || matFile[x+1][y-1] == 'C' || matFile[x+1][y-1] == 'G' || (matFile[x+1][y-1] >= '1' && matFile[x+1][y-1] <= '9')){
+		if (matFile[x+1][y-1] == ' ' || matFile[x+1][y-1] == 'C' || matFile[x+1][y-1] == 'G' || (matFile[x+1][y-1] >= '1' && matFile[x+1][y-1] <= '9') || matFile[x+1][y-1] == '*'){
 			if (this->treasor_distance[x+1][y-1]>d){
 				this->treasor_distance[x+1][y-1] = d;
 				fileCase.push(x+1);
