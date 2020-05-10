@@ -3,6 +3,13 @@
 
 #include "Environnement.h"
 
+/**
+ * @file Labyrinthe.h
+ * @brief Permet de créer notre labyrinthe et d'initialiser toutes nos variables par rapport à notre fichier
+ * 
+ */
+
+//Structure permettant de gérer la téléportation
 struct TeleportPad {
 	char id;
 	int x;
@@ -10,6 +17,7 @@ struct TeleportPad {
 	TeleportPad* sibling;
 };
 
+//Structure permettant de gérer les murs cassables
 struct BreakableWall {
 	int x;
 	int y;
@@ -31,6 +39,7 @@ private:
 
 public:
 	Labyrinthe (char*);
+
 	int width () { return lab_width;}	// retourne la largeur du labyrinthe.
 	int height () { return lab_height;}	// retourne la longueur du labyrinthe.
 	
@@ -55,11 +64,12 @@ public:
 	void setData(int i, int j, char c) {
 		this->_data[i][j] = c;
 	}
-
+	//Recupère la dernière position
 	int* getLastPos() {
 		return this->lastPos;
 	}
 
+	//Met à jour la dernière position dans lequel il a été
 	void updateLastPos(int x, int y, int alpha) {
 		this->lastPos[0] = x;
 		this->lastPos[1] = y;

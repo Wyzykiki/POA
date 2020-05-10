@@ -140,7 +140,6 @@ void Gardien::attack() {
 	}
 }
 
-//Objectif le faire se diriger vers le trésor de manière naturelle
 void Gardien::modeDefense(){
 	//On selectionne l'angle de la case vers laquelle on doit se diriger!
 	int angle = caseProche((int) round(this->_x/Environnement::scale), (int) round(this->_y/Environnement::scale));
@@ -173,9 +172,6 @@ void Gardien::modeDefense(){
 	}
 }
 
-//Fonction qui retourne l'id de la case la plus proche
-//cx, cy étant les coordonnées de cette case
-//angle, l'angle vers lequel on se déplace
 int Gardien::caseProche(int x, int y){
 	Labyrinthe* lab = ((Labyrinthe*) _l);
 	int angle = 0;
@@ -269,7 +265,6 @@ void Gardien::update() {
 	}
 }
 
-/** Déplace le gardien si le déplacement est valide */
 bool Gardien::move_aux(double dx, double dy) {
 	/** La case physique où il se trouve avant son déplacement */
 	int preMoveI = (int) round((this->_x)/Environnement::scale);

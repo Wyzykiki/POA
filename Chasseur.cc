@@ -5,9 +5,14 @@
 #include <ctime>
 #include <algorithm>
 
-/*
- *	Tente un deplacement.
- */
+
+Chasseur::Chasseur (Labyrinthe* l) : Mover (100, 80, l, 0)
+{
+	_hunter_fire = new Sound ("sons/hunter_fire.wav");
+	_hunter_hit = new Sound ("sons/hunter_hit.wav");
+	if (_wall_hit == 0)
+		_wall_hit = new Sound ("sons/hit_wall.wav");
+}
 
 bool Chasseur::move_aux (double dx, double dy)
 {
@@ -43,22 +48,6 @@ bool Chasseur::move_aux (double dx, double dy)
 	}
 }
 
-/*
- *	Constructeur.
- */
-
-Chasseur::Chasseur (Labyrinthe* l) : Mover (100, 80, l, 0)
-{
-	_hunter_fire = new Sound ("sons/hunter_fire.wav");
-	_hunter_hit = new Sound ("sons/hunter_hit.wav");
-	if (_wall_hit == 0)
-		_wall_hit = new Sound ("sons/hit_wall.wav");
-}
-
-/*
- *	Fait bouger la boule de feu (ceci est une exemple, � vous de traiter les collisions sp�cifiques...)
- */
-
 bool Chasseur::process_fireball (float dx, float dy)
 {
 	// calculer la distance entre le chasseur et le lieu de l'explosion.
@@ -83,8 +72,7 @@ bool Chasseur::process_fireball (float dx, float dy)
 	// faire exploser la boule de feu avec un bruit fonction de la distance.
 	_wall_hit -> play (1. - dist2/dmax2);
 	message ("Booom...");
-	// teste si on a touch� le tr�sor: juste pour montrer un exemple de la
-	// fonction � partie_terminee �.
+	// Si une boule de feu atteint le trésor la partie est gagnée
 	if (ballX == _l->_treasor._x && ballY == _l->_treasor._y)
 	{
 		partie_terminee (true);
@@ -113,10 +101,6 @@ bool Chasseur::process_fireball (float dx, float dy)
 	return false;
 }
 
-/*
- *	Tire sur un ennemi.
- */
-
 void Chasseur::fire (int angle_vertical)
 {
 	message ("Woooshh...");
@@ -125,19 +109,6 @@ void Chasseur::fire (int angle_vertical)
 				 /* angles de vis�e */ angle_vertical, _angle);
 }
 
-/*
- *	Clic droit: par d�faut fait tomber le premier gardien.
- *
- *	Inutile dans le vrai jeu, mais c'est juste pour montrer
- *	une utilisation des fonctions � tomber � et � rester_au_sol �
- */
-
-void Chasseur::right_click (bool shift, bool control) {
-	// if (shift)
-	// 	_l -> _guards [1] -> rester_au_sol ();
-	// else
-	// 	_l -> _guards [1] -> tomber ();
-}
 
 void Chasseur::hit() {
 	if (this->pointDeVie > 0) {

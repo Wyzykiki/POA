@@ -203,6 +203,7 @@ Labyrinthe::Labyrinthe (char* filename){
 		}
     }
     file.close();
+	
 	//On remplie la dernière ligne de la matrice
 	for (int j=0; j<this->lab_height+1; j++) {
 		matFile[this->lab_width][j] = ' ';
